@@ -2,6 +2,11 @@
 
 Trucs et astuces concerant l'utilisation de Claude Code.
 
+- [Barre d'état dynamique](#barre-détat-dynamique)
+- [Notifications sonores](#notification-sonore)
+
+---
+
 ## Barre d'état dynamique
 
 Ce script permet d'afficher en bas de son interface `Claude Code` une barre d'état qui indique des informations utiles :
