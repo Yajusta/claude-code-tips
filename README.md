@@ -2,7 +2,7 @@
 
 Trucs et astuces concerant l'utilisation de Claude Code.
 
-## Barre d'état dynamqiue
+## Barre d'état dynamique
 
 Ce script permet d'afficher en bas de son interface `Claude Code` une barre d'état qui indique des informations utiles :
 
