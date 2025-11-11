@@ -4,7 +4,7 @@ Trucs et astuces concerant l'utilisation de Claude Code.
 
 ## Barre d'état dynamqiue
 
-Ce script permet d'afficher en bas dans son interface `Claude Code` une barre d'état qui indique des informations utiles :
+Ce script permet d'afficher en bas de son interface `Claude Code` une barre d'état qui indique des informations utiles :
 
 - Modèle et base URL actuellement utilisé
 - Répertoire et branche GIT de travail
