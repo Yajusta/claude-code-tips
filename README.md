@@ -2,12 +2,14 @@
 
 Trucs et astuces concerant l'utilisation de Claude Code.
 
-- [Barre d'état dynamique](#barre-détat-dynamique)
+- [Ligne de statut](#ligne-de-statut)
 - [Notifications sonores](#notification-sonore)
+- [Retour à la ligne dans l'IDE](#retour-à-la-ligne-dans-lide)
+- [Retour à la ligne dans le Terminal Windows](#retour-à-la-ligne-dans-le-terminal-windows)
 
 ---
 
-## Barre d'état dynamique
+## Ligne de statut
 
 Ce script permet d'afficher en bas de son interface `Claude Code` une barre d'état qui indique des informations utiles :
 
@@ -91,3 +93,44 @@ Voici comment faire sous Windows :
     ]
   }
   ```
+
+## Retour à la ligne dans l'IDE
+
+Par défaut dans Claude Code, puor faire un retour à la ligne dans un prompt il faut taper `\` puis `Enter`.
+Pour que `Shift + Enter` fasse un retour à la ligne dans l'IDE, il faut taper dans Claude la commande `/terminal-setup`. Cela va installer un keybindig pour l'IDE.
+Par exemple, cela va ajouter un fichier `%USERPROFILE%\AppData\Roaming\Code\User\keybindings.json` qui contient : 
+
+```json
+[
+    {
+        "key": "shift+enter",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": {
+            "text": "\u001b\r"
+        },
+        "when": "terminalFocus"
+    }
+]
+```
+
+Si par hasard votre IDE n'est pas reconnu par Claude, mais que c'est un fork de VSCode, il suffit de copier ce keybinding dans le répertoire de l'éditeur.
+Par exemple pour `Antigravity`, on ajoute ce keybinding dans `%USERPROFILE%\AppData\Roaming\Antigravity\User\keybindings.json`.
+
+## Retour à la ligne dans le Terminal Windows
+
+Pour configurer le retour à la ligne dans le Terminal Windows, il faut créer un keybinding spécifique : 
+- Ouvrir les paramètres du terminal (`Ctrl + ,`).
+- Cliquer sur "Ouvrir le fichier JSON". Cela va ouvrir le fichier de configuration dans un éditeur de texte.
+- Trouver le tableau `actions` et ajouter l'élément suivant :
+
+```json
+{
+    "command": 
+    {
+        "action": "sendInput",
+        "input": "\u001b\r"
+    }
+}
+```
+
+- Enregistrer. Le fichier va probablement être modifié par l'application `Terminal` pour ajouter une ligne avec un identifiant unique.
