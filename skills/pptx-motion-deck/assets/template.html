@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>%%TITLE%%</title>
+<style>
+@font-face{font-family:"Deck Display";src:local("HelveticaNeue MediumCond"),local("HelveticaNeueLT Pro 67 Md Cn"),local("Helvetica Neue Condensed Medium"),url(%%FONT_DISPLAY%%) format("woff2");font-weight:400 700;font-display:block}
+@font-face{font-family:"Deck Body";src:url(%%FONT_BODY%%) format("woff2");font-weight:300 800;font-display:block}
+:root{
+%%PALETTE%%
+--line:rgba(var(--ink-rgb),.10);--line-2:rgba(var(--ink-rgb),.06);
+--fd:"Deck Display","Neue Helvetica Pro","Helvetica Neue",Helvetica,Arial,sans-serif;
+--fb:"Deck Body","Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+--fm:ui-monospace,"Cascadia Code",Consolas,"SF Mono",Menlo,monospace;
+--sh1:0 1px 2px rgba(var(--ink-rgb),.06),0 14px 34px -18px rgba(var(--ink-rgb),.28);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--paper-050);overflow:hidden;color:var(--ink-900)}
+body{font-family:var(--fb);-webkit-font-smoothing:antialiased;cursor:default}
+body.nocursor{cursor:none}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden;background:var(--paper-050)}
+#stars{position:absolute;inset:0;width:1920px;height:1080px}
+#disc{position:absolute;border-radius:50%;background:var(--mid-500);left:-400px;top:-400px;width:300px;height:300px}
+#logo{position:absolute;width:300px;left:-400px;top:-400px}
+#scenes{position:absolute;inset:0}
+.scene{position:absolute;inset:0}
+.h{visibility:hidden}
+.abs{position:absolute}
+/* ---------- typography ---------- */
+.eyebrow{position:absolute;left:132px;top:84px;font:500 22px/1 var(--fd);letter-spacing:.14em;text-transform:uppercase;color:var(--accent-600)}
+.title{position:absolute;left:132px;top:118px;font:500 64px/1.1 var(--fd);letter-spacing:-.015em;color:var(--ink-900);white-space:nowrap}
+.w{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .12em .08em 0;margin:0 -.12em -.08em 0}
+.w>span{display:inline-block}
+.lbl{font:500 17px/1.2 var(--fd);letter-spacing:.14em;text-transform:uppercase;color:var(--accent-600)}
+.lbl.muted{color:var(--mid-400)}
+.lbl.warn{color:var(--warn-600)}
+.lbl.accent2{color:var(--accent2-700)}
+.lbl.on-dark{color:var(--accent-400)}
+.d{font-family:var(--fd);font-weight:500;letter-spacing:-.005em}
+.p{font:400 21px/1.5 var(--fb);color:var(--ink-500)}
+.p.s{font-size:18px}
+.p.dark{color:var(--paper-100)}
+.mono{font-family:var(--fm)}
+.c{position:absolute;left:132px;top:250px;width:1656px;height:700px}
+/* ---------- surfaces ---------- */
+.card{position:absolute;background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:var(--sh1)}
+.card.dark{background:var(--ink-800);border-color:var(--ink-700);color:var(--paper-050)}
+.card.soft{background:var(--paper-025);box-shadow:none}
+.card.warn{border:1.5px solid var(--warn-400);background:var(--warn-100)}
+.card.pad{padding:28px 32px}
+.idisc{width:52px;height:52px;border-radius:50%;background:var(--accent-100);color:var(--accent-700);display:grid;place-items:center;flex:0 0 auto}
+.idisc svg{width:26px;height:26px}
+.num{width:48px;height:48px;border-radius:50%;background:var(--accent-100);color:var(--accent-700);display:grid;place-items:center;font:500 24px/1 var(--fd);flex:0 0 auto}
+.num.dark{background:var(--accent-600);color:#fff}
+.tag{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:6px 14px;font:500 15px/1 var(--fd);letter-spacing:.12em;text-transform:uppercase;background:var(--accent-100);color:var(--accent-700);white-space:nowrap}
+.tag.accent2{background:var(--accent2-100);color:var(--accent2-700)}
+.tag.warn{background:var(--warn-100);color:var(--warn-600)}
+.tag.danger{background:var(--danger-100);color:var(--danger-500)}
+.tag.mid{background:var(--paper-100);color:var(--mid-600)}
+.tag.dk{background:rgba(var(--accent-rgb),.2);color:var(--accent-400)}
+.lbl svg.ic{width:18px;height:18px;vertical-align:-3px}.tag svg.ic{width:15px;height:15px}
+svg.ic{fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+svg.wire{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+svg.wire > path{fill:none;stroke:var(--mid-400);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.dot{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--accent-600);box-shadow:0 0 0 6px rgba(var(--accent-rgb),.18);margin:-6px 0 0 -6px;left:0;top:0}
+/* screenshot window */
+.shot{position:absolute;background:#fff;border-radius:18px;border:1px solid var(--line);box-shadow:0 2px 4px rgba(var(--ink-rgb),.05),0 30px 70px -30px rgba(var(--ink-rgb),.45);overflow:hidden}
+.shot .bar{height:40px;background:var(--paper-025);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 16px}
+.shot .bar i{width:11px;height:11px;border-radius:50%;background:var(--paper-100)}
+.shot .bar span{margin-left:14px;font:500 15px/1 var(--fd);letter-spacing:.1em;text-transform:uppercase;color:var(--mid-400)}
+.shot .vp{position:relative;overflow:hidden}
+.shot img{display:block;width:100%}
+.zoom{position:absolute;z-index:5}
+.veil{position:absolute;inset:0;background:rgba(var(--paper-rgb),.86);z-index:4}
+/* list rows */
+.li{display:flex;gap:12px;align-items:flex-start;font:400 20px/1.45 var(--fb);color:var(--ink-500)}
+.li svg{width:22px;height:22px;flex:0 0 auto;margin-top:3px}
+.caret::after{content:"";display:inline-block;width:.55em;height:1em;background:currentColor;margin-left:2px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+/* ---------- chrome ---------- */
+#hud{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:rgba(255,255,255,.72);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);border:1px solid var(--line);box-shadow:0 10px 30px -14px rgba(var(--ink-rgb),.35);transition:opacity .35s ease,transform .35s ease;z-index:20;user-select:none}
+#hud.hide{opacity:0;transform:translate(-50%,10px);pointer-events:none}
+#hud button{width:40px;height:40px;border:0;border-radius:50%;background:transparent;color:var(--ink-500);display:grid;place-items:center;cursor:pointer;transition:background .14s,color .14s}
+#hud button:hover{background:var(--accent-100);color:var(--accent-700)}
+#hud button:focus-visible{outline:2px solid var(--accent-500);outline-offset:2px}
+#hud button svg{width:19px;height:19px}
+#hud #bPlay{background:var(--ink-800);color:#fff}
+#hud #bPlay:hover{background:var(--accent-600)}
+#hud #bPlay.ready{background:var(--accent-600);animation:ready 1.8s ease-in-out infinite}
+@keyframes ready{0%,100%{box-shadow:0 0 0 0 rgba(var(--accent-rgb),.45)}50%{box-shadow:0 0 0 8px rgba(var(--accent-rgb),0)}}
+#hud .sep{width:1px;height:22px;background:var(--line);margin:0 4px}
+#hud .info{font:500 14px/1 var(--fd);letter-spacing:.08em;color:var(--mid-400);padding:0 12px 0 6px;white-space:nowrap;min-width:190px}
+#hud .info b{color:var(--ink-800);font-weight:500}
+#prog{position:fixed;left:0;bottom:0;height:3px;background:var(--accent-600);width:0;z-index:21;transition:opacity .35s}
+#hint{position:absolute;left:0;right:0;top:960px;text-align:center;font:500 20px/1 var(--fd);letter-spacing:.16em;text-transform:uppercase;color:var(--mid-400)}
+@media (prefers-reduced-motion:reduce){.caret::after,#hud #bPlay.ready{animation:none}}
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="stars"></canvas>
+  <div id="disc"></div>
+  <img id="logo" alt="logo" src="%%LOGO%%">
+  <div id="scenes"></div>
+  <div id="hint">Espace pour démarrer</div>
+</div>
+<div id="hud">
+  <button id="bHome" title="Retour au début (Début)"><svg class="ic" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
+  <button id="bPrev" title="Chapitre précédent (←)"><svg class="ic" viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" x2="5" y1="19" y2="5"/></svg></button>
+  <button id="bPlay" title="Pause / reprendre / suivant (Espace)"><svg class="ic" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></svg></button>
+  <button id="bNext" title="Chapitre suivant (→)"><svg class="ic" viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" x2="19" y1="5" y2="19"/></svg></button>
+  <span class="sep"></span>
+  <span class="info" id="info">—</span>
+  <button id="bFs" title="Plein écran (F)"><svg class="ic" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+</div>
+<div id="prog"></div>
+<script>%%GSAP%%</script>
+<script>
+const IMG=%%IMAGES%%;
+</script>
+<script>%%ENGINE%%</script>
+<script>%%SCENES%%</script>
+<script>boot();</script>
+</body>
+</html>
