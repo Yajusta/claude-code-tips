@@ -19,7 +19,12 @@ La technologie retenue est **HTML/CSS + GSAP (timelines) + canvas 2D** pour le d
 - **Clic gauche** n'importe où hors de la barre d'icônes : même comportement qu'Espace.
 - **Début** : retour au début. **F** : plein écran.
 - **Barre d'icônes en bas**, en pilule semi-transparente : retour au début · chapitre précédent · pause/lecture · chapitre suivant · compteur « 12 / 68 · Titre de scène » · plein écran. Quand le chapitre est fini, le bouton central devient une flèche qui pulse.
-- Après environ 2,6 s sans mouvement de souris, la barre et le curseur se masquent. Ils réapparaissent au moindre mouvement. Une barre de progression fine s'affiche en bas.
+- **Affichage de la barre** : un bouton réglages (roue dentée) ouvre un menu à trois modes, mémorisé dans le navigateur (`localStorage`, clé `deck.hudMode`) ; la touche **H** passe d'un mode à l'autre avec un bref message :
+  - **Visible quelques secondes** (défaut) : la barre apparaît à chaque action ou mouvement de souris, puis se masque après ~2,6 s ;
+  - **Toujours visible** ;
+  - **Souris en bas de l'écran** : la barre n'apparaît que si la souris est dans la zone basse, dont la hauteur = hauteur de la barre + 2 × son écart avec le bas de la fenêtre (calculée, pas codée en dur). Le clavier ne la fait pas apparaître.
+- Menu ouvert : un clic sur la présentation ou Échap le ferme, sans changer de chapitre.
+- Dans tous les modes, le curseur se masque après ~2,6 s d'immobilité. Une barre de progression fine s'affiche en bas.
 - Les boucles d'ambiance (particules, défilement lent) tournent hors timeline. La pause les fige aussi.
 
 Tout cela est déjà implémenté dans `assets/engine.js`. **Ne le réécris pas : copie-le.**

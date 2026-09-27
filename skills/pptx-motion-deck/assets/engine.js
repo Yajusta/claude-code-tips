@@ -358,12 +358,40 @@ gsap.ticker.add(() => {
   const p = (cur + (tl ? tl.progress() : 0)) / STEPS.length;
   prog.style.width = (p * 100).toFixed(2) + '%';
 });
-let idleT;
-function wake() {
-  $('#hud').classList.remove('hide'); prog.style.opacity = 1; document.body.classList.remove('nocursor');
-  clearTimeout(idleT);
-  idleT = setTimeout(() => { if (!$('#hud').matches(':hover')) { $('#hud').classList.add('hide'); prog.style.opacity = .5; document.body.classList.add('nocursor'); } }, 2600);
+/* ---------- affichage de la barre : auto | always | zone ---------- */
+const HUD_MODES = { auto: 'Barre : visible quelques secondes', always: 'Barre : toujours visible', zone: 'Barre : souris en bas de l’écran' };
+let hudMode = 'auto', idleT, curT, toastT, mouseY = -1;
+try { const m = localStorage.getItem('deck.hudMode'); if (HUD_MODES[m]) hudMode = m; } catch (e) {}
+const hud = $('#hud'), menu = $('#menu');
+const menuOpen = () => menu.classList.contains('open');
+function showHud(on) { hud.classList.toggle('hide', !on); prog.style.opacity = on ? 1 : .5; }
+/* zone basse = hauteur de la barre + 2 × son écart avec le bas de la fenêtre */
+function zoneHeight() { return hud.offsetHeight + 2 * (parseFloat(getComputedStyle(hud).bottom) || 0); }
+function inZone() { return mouseY >= 0 && innerHeight - mouseY < zoneHeight(); }
+function refreshHud() {
+  if (menuOpen() || hud.matches(':hover')) return showHud(true);
+  if (hudMode === 'always') return showHud(true);
+  if (hudMode === 'zone') return showHud(inZone());
 }
+function wake(e) {
+  if (e && e.clientY !== undefined) mouseY = e.clientY;
+  document.body.classList.remove('nocursor');
+  clearTimeout(curT);
+  curT = setTimeout(() => { if (!hud.matches(':hover') && !menuOpen()) document.body.classList.add('nocursor'); }, 2600);
+  if (hudMode === 'auto') {
+    showHud(true); clearTimeout(idleT);
+    idleT = setTimeout(() => { if (!hud.matches(':hover') && !menuOpen()) showHud(false); }, 2600);
+  } else refreshHud();
+}
+function setHudMode(m, announce) {
+  if (!HUD_MODES[m]) return;
+  hudMode = m; clearTimeout(idleT);
+  try { localStorage.setItem('deck.hudMode', m); } catch (e) {}
+  menu.querySelectorAll('.opt').forEach(o => o.classList.toggle('on', o.dataset.mode === m));
+  if (announce) { const t = $('#toast'); t.textContent = HUD_MODES[m]; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 1600); }
+  wake();
+}
+function toggleMenu(open) { menu.classList.toggle('open', open ?? !menuOpen()); $('#bSet').classList.toggle('on', menuOpen()); wake(); }
 function fullscreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); }
 
 function boot() {
@@ -378,6 +406,11 @@ function boot() {
   $('#bPlay').onclick = () => { toggle(); $('#bPlay').blur(); };
   $('#bNext').onclick = () => { next(); $('#bNext').blur(); };
   $('#bFs').onclick = () => { fullscreen(); $('#bFs').blur(); };
+  $('#bSet').onclick = () => { toggleMenu(); $('#bSet').blur(); };
+  menu.querySelectorAll('.opt').forEach(o => o.onclick = () => { setHudMode(o.dataset.mode); toggleMenu(false); o.blur(); });
+  setHudMode(hudMode);
+  document.addEventListener('mouseleave', () => { mouseY = -1; if (hudMode === 'zone' && !menuOpen()) showHud(false); });
+  hud.addEventListener('mouseleave', () => wake());
   addEventListener('keydown', e => {
     if (e.repeat && e.key === ' ') return;
     switch (e.key) {
@@ -386,6 +419,8 @@ function boot() {
       case ' ': case 'Spacebar': e.preventDefault(); toggle(); break;
       case 'Home': e.preventDefault(); home(); break;
       case 'f': case 'F': fullscreen(); break;
+      case 'h': case 'H': setHudMode({ auto: 'always', always: 'zone', zone: 'auto' }[hudMode], true); break;
+      case 'Escape': if (menuOpen()) toggleMenu(false); break;
       default: return;
     }
     wake();
@@ -405,7 +440,7 @@ function boot() {
     wheelAcc = 0; wheelLock = now + 700; wake();
   }, { passive: false });
   /* clic gauche hors barre d'icônes = Espace */
-  addEventListener('click', e => { if (e.button !== 0 || e.target.closest('#hud')) return; toggle(); wake(); });
+  addEventListener('click', e => { if (e.button !== 0 || e.target.closest('#hud')) return; if (menuOpen()) { toggleMenu(false); return; } toggle(); wake(e); });
   setStatus('idle'); info.innerHTML = `<b>00</b> / ${STEPS.length} · prêt`;
   wake();
   window.__deck = { play, next, prev, pause, resume, STEPS, SCENES, get status() { return status; }, get cur() { return cur; }, get tl() { return tl; } };

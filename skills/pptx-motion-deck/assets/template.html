@@ -92,6 +92,16 @@ svg.wire > path{fill:none;stroke:var(--mid-400);stroke-width:2.5;stroke-linecap:
 #hud .sep{width:1px;height:22px;background:var(--line);margin:0 4px}
 #hud .info{font:500 14px/1 var(--fd);letter-spacing:.08em;color:var(--mid-400);padding:0 12px 0 6px;white-space:nowrap;min-width:190px}
 #hud .info b{color:var(--ink-800);font-weight:500}
+#hud .menu{position:absolute;right:0;bottom:calc(100% + 10px);width:330px;padding:8px;border-radius:18px;background:rgba(255,255,255,.96);border:1px solid var(--line);box-shadow:0 18px 40px -16px rgba(27,39,48,.4);opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity .18s ease,transform .18s ease}
+#hud .menu.open{opacity:1;transform:none;pointer-events:auto}
+#hud .menu .mt{font:500 12.5px/1 var(--fd);letter-spacing:.14em;text-transform:uppercase;color:var(--mid-400);padding:10px 12px 8px}
+#hud .menu .opt{display:flex;gap:12px;align-items:flex-start;width:100%;height:auto;border-radius:12px;padding:10px 12px;text-align:left;font:400 14.5px/1.35 var(--fb);color:var(--ink-800);place-items:initial}
+#hud .menu .opt i{flex:0 0 auto;width:16px;height:16px;margin-top:2px;border-radius:50%;border:1.5px solid var(--mid-300)}
+#hud .menu .opt.on i{border:5px solid var(--accent-600)}
+#hud .menu .opt small{display:block;color:var(--mid-400);font-size:12.5px;margin-top:2px}
+#hud #bSet.on{background:var(--accent-100);color:var(--accent-700)}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);padding:10px 18px;border-radius:999px;background:var(--ink-800);color:#fff;font:500 14px/1 var(--fd);letter-spacing:.06em;opacity:0;pointer-events:none;transition:opacity .25s;z-index:22}
+#toast.show{opacity:1}
 #prog{position:fixed;left:0;bottom:0;height:3px;background:var(--accent-600);width:0;z-index:21;transition:opacity .35s}
 #hint{position:absolute;left:0;right:0;top:960px;text-align:center;font:500 20px/1 var(--fd);letter-spacing:.16em;text-transform:uppercase;color:var(--mid-400)}
 @media (prefers-reduced-motion:reduce){.caret::after,#hud #bPlay.ready{animation:none}}
@@ -112,8 +122,17 @@ svg.wire > path{fill:none;stroke:var(--mid-400);stroke-width:2.5;stroke-linecap:
   <button id="bNext" title="Chapitre suivant (→)"><svg class="ic" viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" x2="19" y1="5" y2="19"/></svg></button>
   <span class="sep"></span>
   <span class="info" id="info">—</span>
+  <button id="bSet" title="Affichage de la barre (H)"><svg class="ic" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
   <button id="bFs" title="Plein écran (F)"><svg class="ic" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+  <div class="menu" id="menu">
+    <div class="mt">Affichage de la barre</div>
+    <button class="opt" data-mode="auto"><i></i><span>Visible quelques secondes<small>Apparaît à chaque action ou mouvement de souris, puis se masque</small></span></button>
+    <button class="opt" data-mode="always"><i></i><span>Toujours visible</span></button>
+    <button class="opt" data-mode="zone"><i></i><span>Souris en bas de l'écran<small>N'apparaît que quand la souris est dans la zone basse</small></span></button>
+  </div>
 </div>
+</div>
+<div id="toast"></div>
 <div id="prog"></div>
 <script>%%GSAP%%</script>
 <script>
